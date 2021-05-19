@@ -5,6 +5,12 @@ These JSON commands are **available via Python**.
 
 # Implemented Commands
 
+- [Publish](#publish)
+- [GetProjectInfo](#getprojectinfo)
+- [TeamworkReceive](#teamworkreceive)
+- [GetArchicadLocation](#getarchicadlocation)
+- [Quit](#quit)
+
 ## Publish
 Performs a publish operation on the currently opened project. Only the given publisher set will be published.
 ### Parameters
