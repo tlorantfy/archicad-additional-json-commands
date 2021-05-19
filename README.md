@@ -1,7 +1,7 @@
 # Additional JSON/Python Commands Add-On for Archicad
 
 This Add-On extends the JSON interface of Archicad by implementing new JSON commands.  
-These JSON commands are **available via Python**.
+These JSON commands are **callable via Python**, see examples below.
 
 # Implemented Commands
 
