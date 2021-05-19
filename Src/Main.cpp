@@ -45,8 +45,10 @@ GSErrCode	__ACDLL_CALL	RegisterInterface (void)
 GSErrCode __ACENV_CALL	Initialize (void)
 {
 	GSErrCode err = ACAPI_Install_AddOnCommandHandler (GS::NewOwned<PublishCommand> ());
-
-	err = ACAPI_Install_AddOnCommandHandler (GS::NewOwned<TeamworkReceiveCommand> ());
+	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<TeamworkReceiveCommand> ());
+	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<GetProjectInfoCommand> ());
+	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<GetArchicadLocationCommand> ());
+	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<QuitCommand> ());
 
 	return err;
 }		// Initialize
