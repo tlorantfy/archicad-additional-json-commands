@@ -1,5 +1,5 @@
 // *****************************************************************************
-// Contact person:	Tibor Lor�ntfy (tlorantfy@graphisoft.com)
+// Contact person:	Tibor Lorántfy (tlorantfy@graphisoft.com)
 // *****************************************************************************
 
 #include	"APIEnvir.h"
