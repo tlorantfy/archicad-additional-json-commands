@@ -26,8 +26,15 @@ Performs a publish operation on the currently opened project. Only the given pub
   * The error message upon error. If the command executed successfully, then there is no response.
 ### Python Example
 ```python
+from archicad import ACConnection
+
+conn = ACConnection.connect ()
+
+acc = conn.commands
+act = conn.types
+
 parameters = { 'publisherSetName': publisherSetName }
-response = acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'Publish'), parameters)
+acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'Publish'), parameters)
 ```
 
 ## GetProjectInfo
@@ -51,9 +58,17 @@ Retrieves the location of the currently running Archicad executable.
   * The name of the project.
 ### Python Example
 ```python
+from archicad import ACConnection
+
+conn = ACConnection.connect ()
+
+acc = conn.commands
+act = conn.types
+
 response = acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'GetProjectInfo'))
 isTeamwork = response['isTeamwork']
-projectLocation = response['projectLocation']
+if not response['isUntitled']:
+  projectLocation = response['projectLocation']
 ```
 
 ## TeamworkReceive
@@ -65,6 +80,13 @@ Performs a receive operation on the currently opened Teamwork (BIMcloud) project
   * The error message upon error. If the command executed successfully, then there is no response.
 ### Python Example
 ```python
+from archicad import ACConnection
+
+conn = ACConnection.connect ()
+
+acc = conn.commands
+act = conn.types
+
 acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'TeamworkReceive'))
 ```
 
@@ -77,6 +99,13 @@ Retrieves the location of the currently running Archicad executable.
   * The location of the Archicad executable in the filesystem.
 ### Python Example
 ```python
+from archicad import ACConnection
+
+conn = ACConnection.connect ()
+
+acc = conn.commands
+act = conn.types
+
 response = acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'GetArchicadLocation'))
 archicadLocation = response['archicadLocation']
 ```
@@ -90,5 +119,12 @@ Performs a quit operation on the currently running Archicad instance.
   * The error message upon error. If the command executed successfully, then there is no response.
 ### Python Example
 ```python
+from archicad import ACConnection
+
+conn = ACConnection.connect ()
+
+acc = conn.commands
+act = conn.types
+
 acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'TeamworkReceive'))
 ```
