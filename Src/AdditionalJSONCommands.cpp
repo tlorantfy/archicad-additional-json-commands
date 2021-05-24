@@ -38,6 +38,61 @@ static GS::Optional<IO::Location>	GetApplicationLocation ()
 }
 
 
+constexpr const char* ErrorResponseField = "error";
+constexpr const char* ErrorCodeResponseField = "code";
+constexpr const char* ErrorMessageResponseField = "message";
+
+
+static GS::ObjectState CreateErrorResponse (APIErrCodes errorCode, const char* errorMessage)
+{
+	GS::ObjectState error;
+	error.Add (ErrorCodeResponseField, errorCode);
+	error.Add (ErrorMessageResponseField, errorMessage);
+	return GS::ObjectState (ErrorResponseField, error);
+}
+
+
+// --- AdditionalJSONCommand ----------------------------------------------------------------------------------
+
+GS::String AdditionalJSONCommand::GetNamespace () const
+{
+	return AdditionalJSONCommandsNamespace;
+}
+
+
+GS::Optional<GS::UniString> AdditionalJSONCommand::GetSchemaDefinitions () const
+{
+	return {};
+}
+
+
+GS::Optional<GS::UniString> AdditionalJSONCommand::GetInputParametersSchema () const
+{
+	return {};
+}
+
+
+GS::Optional<GS::UniString> AdditionalJSONCommand::GetResponseSchema () const
+{
+	return GS::UniString::Printf (R"({
+	"type": "object",
+	"properties": {
+		"%s": {
+			"$ref": "APITypes.json#/definitions/Error"
+		}
+	},
+	"additionalProperties": false,
+	"required": []
+})",
+ErrorResponseField);
+}
+
+
+void AdditionalJSONCommand::OnResponseValidationFailed (const GS::ObjectState& /*response*/) const
+{
+}
+
+
 // --- PublishCommand ----------------------------------------------------------------------------------
 
 GS::String PublishCommand::GetName () const
@@ -46,21 +101,8 @@ GS::String PublishCommand::GetName () const
 }
 
 
-GS::String PublishCommand::GetNamespace () const
-{
-	return AdditionalJSONCommandsNamespace;
-}
-
-
-GS::Optional<GS::UniString> PublishCommand::GetSchemaDefinitions () const
-{
-	return {};
-}
-
-
 constexpr const char* PublisherSetNameParameterField = "publisherSetName";
 constexpr const char* OutputPathParameterField = "outputPath";
-constexpr const char* ErrorMessageResponseField = "errorMessage";
 
 
 GS::Optional<GS::UniString> PublishCommand::GetInputParametersSchema () const
@@ -89,12 +131,6 @@ PublisherSetNameParameterField);
 }
 
 
-GS::Optional<GS::UniString> PublishCommand::GetResponseSchema () const
-{
-	return {};
-}
-
-
 GS::ObjectState	PublishCommand::Execute (const GS::ObjectState& parameters, GS::ProcessControl& /*processControl*/) const
 {
 	GS::UniString publisherSetName;
@@ -102,7 +138,7 @@ GS::ObjectState	PublishCommand::Execute (const GS::ObjectState& parameters, GS::
 
 	const auto publisherSetNameGuidTable = GetPublisherSetNameGuidTable ();
 	if (!publisherSetNameGuidTable.ContainsKey (publisherSetName)) {
-		return GS::ObjectState (ErrorMessageResponseField, "Not valid publisher set name.");
+		return CreateErrorResponse (APIERR_BADNAME, "Not valid publisher set name.");
 	}
 
 	API_PublishPars	publishPars = {};
@@ -119,15 +155,10 @@ GS::ObjectState	PublishCommand::Execute (const GS::ObjectState& parameters, GS::
 	delete publishPars.path;
 
 	if (err != NoError) {
-		return GS::ObjectState (ErrorMessageResponseField, "Publishing failed. Check output path!");
+		return CreateErrorResponse (APIERR_COMMANDFAILED, "Publishing failed. Check output path!");
 	}
 
 	return {};
-}
-
-
-void PublishCommand::OnResponseValidationFailed (const GS::ObjectState& /*response*/) const
-{
 }
 
 
@@ -139,44 +170,15 @@ GS::String TeamworkReceiveCommand::GetName () const
 }
 
 
-GS::String TeamworkReceiveCommand::GetNamespace () const
-{
-	return AdditionalJSONCommandsNamespace;
-}
-
-
-GS::Optional<GS::UniString> TeamworkReceiveCommand::GetSchemaDefinitions () const
-{
-	return {};
-}
-
-
-GS::Optional<GS::UniString> TeamworkReceiveCommand::GetInputParametersSchema () const
-{
-	return {};
-}
-
-
-GS::Optional<GS::UniString> TeamworkReceiveCommand::GetResponseSchema () const
-{
-	return {};
-}
-
-
 GS::ObjectState	TeamworkReceiveCommand::Execute (const GS::ObjectState& /*parameters*/, GS::ProcessControl& /*processControl*/) const
 {
 	GSErrCode err = ACAPI_TeamworkControl_ReceiveChanges ();
 
 	if (err != NoError) {
-		return GS::ObjectState (ErrorMessageResponseField, "Receive failed. Check internet connection!");
+		return CreateErrorResponse (APIERR_SERVICEFAILED, "Receive failed. Check internet connection!");
 	}
 
 	return {};
-}
-
-
-void TeamworkReceiveCommand::OnResponseValidationFailed (const GS::ObjectState& /*response*/) const
-{
 }
 
 
@@ -188,29 +190,11 @@ GS::String GetProjectInfoCommand::GetName () const
 }
 
 
-GS::String GetProjectInfoCommand::GetNamespace () const
-{
-	return AdditionalJSONCommandsNamespace;
-}
-
-
-GS::Optional<GS::UniString> GetProjectInfoCommand::GetSchemaDefinitions () const
-{
-	return {};
-}
-
-
 constexpr const char* IsUntitledResponseField = "isUntitled";
 constexpr const char* IsTeamworkResponseField = "isTeamwork";
 constexpr const char* ProjectLocationResponseField = "projectLocation";
 constexpr const char* ProjectPathResponseField = "projectPath";
 constexpr const char* ProjectNameResponseField = "projectName";
-
-
-GS::Optional<GS::UniString> GetProjectInfoCommand::GetInputParametersSchema () const
-{
-	return {};
-}
 
 
 GS::Optional<GS::UniString> GetProjectInfoCommand::GetResponseSchema () const
@@ -259,7 +243,7 @@ GS::ObjectState	GetProjectInfoCommand::Execute (const GS::ObjectState& /*paramet
 	GSErrCode err = ACAPI_Environment (APIEnv_ProjectID, &projectInfo);
 
 	if (err != NoError) {
-		return GS::ObjectState (ErrorMessageResponseField, "Failed to retrieve project information. Check the opened project!");
+		return CreateErrorResponse (APIERR_NOPLAN, "Failed to retrieve project information. Check the opened project!");
 	}
 
 	GS::ObjectState response;
@@ -281,11 +265,6 @@ GS::ObjectState	GetProjectInfoCommand::Execute (const GS::ObjectState& /*paramet
 }
 
 
-void GetProjectInfoCommand::OnResponseValidationFailed (const GS::ObjectState& /*response*/) const
-{
-}
-
-
 // --- GetArchicadLocationCommand ----------------------------------------------------------------------------------
 
 GS::String GetArchicadLocationCommand::GetName () const
@@ -294,25 +273,7 @@ GS::String GetArchicadLocationCommand::GetName () const
 }
 
 
-GS::String GetArchicadLocationCommand::GetNamespace () const
-{
-	return AdditionalJSONCommandsNamespace;
-}
-
-
-GS::Optional<GS::UniString> GetArchicadLocationCommand::GetSchemaDefinitions () const
-{
-	return {};
-}
-
-
 constexpr const char* ArchicadLocationResponseField = "archicadLocation";
-
-
-GS::Optional<GS::UniString> GetArchicadLocationCommand::GetInputParametersSchema () const
-{
-	return {};
-}
 
 
 GS::Optional<GS::UniString> GetArchicadLocationCommand::GetResponseSchema () const
@@ -341,15 +302,10 @@ GS::ObjectState	GetArchicadLocationCommand::Execute (const GS::ObjectState& /*pa
 	const GS::Optional<IO::Location> applicationFileLocation = GetApplicationLocation ();
 
 	if (!applicationFileLocation.HasValue ()) {
-		return GS::ObjectState (ErrorMessageResponseField, "Failed to get the location of the Archicad application!");
+		return CreateErrorResponse (APIERR_GENERAL, "Failed to get the location of the Archicad application!");
 	}
 
 	return GS::ObjectState (ArchicadLocationResponseField, applicationFileLocation.Get ().ToDisplayText ());
-}
-
-
-void GetArchicadLocationCommand::OnResponseValidationFailed (const GS::ObjectState& /*response*/) const
-{
 }
 
 
@@ -361,43 +317,14 @@ GS::String QuitCommand::GetName () const
 }
 
 
-GS::String QuitCommand::GetNamespace () const
-{
-	return AdditionalJSONCommandsNamespace;
-}
-
-
-GS::Optional<GS::UniString> QuitCommand::GetSchemaDefinitions () const
-{
-	return {};
-}
-
-
-GS::Optional<GS::UniString> QuitCommand::GetInputParametersSchema () const
-{
-	return {};
-}
-
-
-GS::Optional<GS::UniString> QuitCommand::GetResponseSchema () const
-{
-	return {};
-}
-
-
 GS::ObjectState	QuitCommand::Execute (const GS::ObjectState& /*parameters*/, GS::ProcessControl& /*processControl*/) const
 {
 	Int64 magicCode = 1234;
 	GSErrCode err = ACAPI_Automate (APIDo_QuitID, reinterpret_cast<void*> (magicCode));
 
 	if (err != NoError) {
-		return GS::ObjectState (ErrorMessageResponseField, "Failed to quit Archicad!");
+		return CreateErrorResponse (APIERR_COMMANDFAILED, "Failed to quit Archicad!");
 	}
 
 	return {};
-}
-
-
-void QuitCommand::OnResponseValidationFailed (const GS::ObjectState& /*response*/) const
-{
 }
