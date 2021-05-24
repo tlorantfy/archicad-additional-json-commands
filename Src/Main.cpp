@@ -49,6 +49,7 @@ GSErrCode __ACENV_CALL	Initialize (void)
 	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<GetProjectInfoCommand> ());
 	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<GetArchicadLocationCommand> ());
 	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<QuitCommand> ());
+	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<ReloadLibrariesCommand> ());
 
 	return err;
 }		// Initialize
