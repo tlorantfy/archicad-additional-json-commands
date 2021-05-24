@@ -10,6 +10,7 @@ These JSON commands are **callable via Python**, see examples below.
 - [TeamworkReceive](#teamworkreceive)
 - [GetArchicadLocation](#getarchicadlocation)
 - [Quit](#quit)
+- [ReloadLibraries](#reloadlibraries)
 
 ## Publish
 Performs a publish operation on the currently opened project. Only the given publisher set will be published.
@@ -127,4 +128,24 @@ acc = conn.commands
 act = conn.types
 
 acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'TeamworkReceive'))
+```
+
+## ReloadLibraries
+Resets and loads the active libraries.  
+All the active libraries (included the BIMcloud and BIM Server Libraries too) will be reloaded.
+### Parameters
+### Response
+* errorMessage
+  * Type: string
+  * The error message upon error. If the command executed successfully, then there is no response.
+### Python Example
+```python
+from archicad import ACConnection
+
+conn = ACConnection.connect ()
+
+acc = conn.commands
+act = conn.types
+
+acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'ReloadLibraries'))
 ```
