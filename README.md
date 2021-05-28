@@ -3,6 +3,8 @@
 This Add-On extends the JSON interface of Archicad by implementing new JSON commands.  
 These JSON commands are **callable via Python**, see examples below.
 
+**Requires Archicad 25 or later.**
+
 # Implemented Commands
 
 - [Publish](#publish)
