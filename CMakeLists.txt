@@ -35,31 +35,26 @@ function (SubDirList dirlist curdir)
 	set (${dirlist} ${result} PARENT_SCOPE)
 endfunction ()
 
-function (GetModuleNameFromModuleFolderName module folder)
-	set (result "")
-	if (${folder} MATCHES "^.*Lib$")
-		string (REGEX REPLACE "^(.*)Lib$" "\\1" result ${folder})
-	elseif (WIN32 AND ${folder} MATCHES "^Communication.*$")
-		string (REGEX REPLACE "^Communication(.*)$" "Communication.\\1" result ${folder})
-	else ()
-		set (result ${folder})
-	endif ()
-	set (${module} ${result} PARENT_SCOPE)
+function (AddGSModuleToIncludeDirectories target folder)
+	message (STATUS "Add ${folder} GS Module to include directories")
+	target_include_directories (${target} PUBLIC "${AC_API_DEVKIT_DIR}/Support/Modules/${folder}")
 endfunction ()
 
-function (AddGSModule target folder)
-	message (STATUS "AddGSModule ${folder}")
-	target_include_directories (${target} PUBLIC "${AC_API_DEVKIT_DIR}/Support/Modules/${folder}")
-	set (module "")
-	GetModuleNameFromModuleFolderName (module ${folder})
+function (AddGSModulesToLinkLibraries target folder)
 	if (WIN32)
-		set (ModuleLibPath "${AC_API_DEVKIT_DIR}/Support/Modules/${folder}/Win/${module}Imp.lib")
+		file (GLOB LinkLibraries
+			${AC_API_DEVKIT_DIR}/Support/Modules/${folder}/Win/*.lib
+		)
 	else ()
-		set (ModuleLibPath "${AC_API_DEVKIT_DIR}/Support/Frameworks/${module}.framework")
+		file (GLOB LinkLibraries
+			${AC_API_DEVKIT_DIR}/Support/Frameworks/*.framework
+		)
 	endif ()
-	if (EXISTS ${ModuleLibPath})
-		target_link_libraries (${target} ${ModuleLibPath})
-	endif ()
+	foreach (linkLibrary ${LinkLibraries})
+		get_filename_component (libraryName "${linkLibrary}" NAME)
+		message (STATUS "Add ${libraryName} GS Module to link libraries")
+		target_link_libraries (${target} ${linkLibrary})
+	endforeach ()
 endfunction ()
 
 set_property (GLOBAL PROPERTY USE_FOLDERS ON)
@@ -67,6 +62,7 @@ set_property (GLOBAL PROPERTY USE_FOLDERS ON)
 get_filename_component (CMAKE_CURRENT_FOLDER_NAME "${CMAKE_CURRENT_LIST_DIR}" NAME)
 set (CMAKE_SUPPRESS_REGENERATION 1)
 set (CMAKE_CONFIGURATION_TYPES Debug;Release;RelWithDebInfo)
+set (CMAKE_OSX_DEPLOYMENT_TARGET ___MACOSX_DEPLOYMENT_TARGET___)
 set (AC_API_DEVKIT_DIR "${CMAKE_CURRENT_LIST_DIR}/../.." CACHE PATH "API DevKit directory.")
 set (AC_ADDON_NAME "${CMAKE_CURRENT_FOLDER_NAME}" CACHE STRING "Add-On name.")
 set (AC_ADDON_LANGUAGE "INT" CACHE STRING "Add-On language code.")
@@ -105,7 +101,6 @@ if (WIN32)
 	file (GLOB AddOnResourceFiles
 		${AddOnResourcesFolder}/R${AC_ADDON_LANGUAGE}/*.grc
 		${AddOnResourcesFolder}/RFIX/*.grc
-		${AddOnResourcesFolder}/RFIX/*.grc
 		${AddOnResourcesFolder}/RFIX.win/*.rc2
 	)
 else ()
@@ -133,7 +128,7 @@ if (WIN32)
 		DEPENDS ${AddOnResourceFiles} ${AddOnImageFiles}
 		COMMENT "Compiling resources..."
 		COMMAND ${CMAKE_COMMAND} -E make_directory "${ResourceObjectsDir}"
-		COMMAND python "${APIDevKitToolsFolderAbsolute}/CompileResources.py" "${AC_ADDON_LANGUAGE}" "${AC_API_DEVKIT_DIR}" "${AddOnSourcesFolderAbsolute}" "${AddOnResourcesFolderAbsolute}" "${ResourceObjectsDir}" "${ResourceObjectsDir}/${AC_ADDON_NAME}.res"
+		COMMAND python "${AddOnResourcesFolderAbsolute}/CompileResources.py" "${AC_ADDON_LANGUAGE}" "${AC_API_DEVKIT_DIR}" "${AddOnSourcesFolderAbsolute}" "${AddOnResourcesFolderAbsolute}" "${ResourceObjectsDir}" "${ResourceObjectsDir}/${AC_ADDON_NAME}.res"
 		COMMAND ${CMAKE_COMMAND} -E touch "${ResourceObjectsDir}/AddOnResources.stamp"
 	)
 else ()
@@ -214,5 +209,12 @@ get_filename_component (APIDevKitModulesDir "${AC_API_DEVKIT_DIR}/Support/Module
 set (GSModules "")
 SubDirList (GSModules "${APIDevKitModulesDir}")
 foreach (gsModule ${GSModules})
-	AddGSModule (AddOn ${gsModule})
+	AddGSModuleToIncludeDirectories (AddOn ${gsModule})
 endforeach ()
+if (WIN32)
+	foreach (gsModule ${GSModules})
+		AddGSModulesToLinkLibraries (AddOn ${gsModule})
+	endforeach ()
+else ()
+	AddGSModulesToLinkLibraries (AddOn)
+endif ()
