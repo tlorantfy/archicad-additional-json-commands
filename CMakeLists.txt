@@ -62,7 +62,9 @@ set_property (GLOBAL PROPERTY USE_FOLDERS ON)
 get_filename_component (CMAKE_CURRENT_FOLDER_NAME "${CMAKE_CURRENT_LIST_DIR}" NAME)
 set (CMAKE_SUPPRESS_REGENERATION 1)
 set (CMAKE_CONFIGURATION_TYPES Debug;Release;RelWithDebInfo)
-set (CMAKE_OSX_DEPLOYMENT_TARGET ___MACOSX_DEPLOYMENT_TARGET___)
+set (CMAKE_OSX_DEPLOYMENT_TARGET "10.15")
+set (CMAKE_OSX_ARCHITECTURES "x86_64")
+set (CMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH "NO")
 set (AC_API_DEVKIT_DIR "${CMAKE_CURRENT_LIST_DIR}/../.." CACHE PATH "API DevKit directory.")
 set (AC_ADDON_NAME "${CMAKE_CURRENT_FOLDER_NAME}" CACHE STRING "Add-On name.")
 set (AC_ADDON_LANGUAGE "INT" CACHE STRING "Add-On language code.")
@@ -137,7 +139,7 @@ else ()
 		DEPENDS ${AddOnResourceFiles} ${AddOnImageFiles}
 		COMMENT "Compiling resources..."
 		COMMAND ${CMAKE_COMMAND} -E make_directory "${ResourceObjectsDir}"
-		COMMAND python "${APIDevKitToolsFolderAbsolute}/CompileResources.py" "${AC_ADDON_LANGUAGE}" "${AC_API_DEVKIT_DIR}" "${AddOnSourcesFolderAbsolute}" "${AddOnResourcesFolderAbsolute}" "${ResourceObjectsDir}" "${CMAKE_BINARY_DIR}/$<CONFIG>/${AC_ADDON_NAME}.bundle/Contents/Resources"
+		COMMAND python "${AddOnResourcesFolderAbsolute}/CompileResources.py" "${AC_ADDON_LANGUAGE}" "${AC_API_DEVKIT_DIR}" "${AddOnSourcesFolderAbsolute}" "${AddOnResourcesFolderAbsolute}" "${ResourceObjectsDir}" "${CMAKE_BINARY_DIR}/$<CONFIG>/${AC_ADDON_NAME}.bundle/Contents/Resources"
 		COMMAND ${CMAKE_COMMAND} -E copy "${AC_API_DEVKIT_DIR}/Support/Inc/PkgInfo" "${CMAKE_BINARY_DIR}/$<CONFIG>/${AC_ADDON_NAME}.bundle/Contents/PkgInfo"
 		COMMAND ${CMAKE_COMMAND} -E touch "${ResourceObjectsDir}/AddOnResources.stamp"
 	)
@@ -216,5 +218,5 @@ if (WIN32)
 		AddGSModulesToLinkLibraries (AddOn ${gsModule})
 	endforeach ()
 else ()
-	AddGSModulesToLinkLibraries (AddOn)
+	AddGSModulesToLinkLibraries (AddOn "")
 endif ()
