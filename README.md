@@ -3,8 +3,8 @@
 This Add-On extends the JSON interface of Archicad by implementing new JSON commands.  
 These JSON commands are **callable via Python**, see examples below.
 
-* [Download the Add-On for Windows](https://github.com/tlorantfy/archicad-additional-json-commands/releases/download/25.2/archicad-additional-json-commands.apx)
-* [Download the Add-On for macOS](https://github.com/tlorantfy/archicad-additional-json-commands/releases/download/25.2/archicad-additional-json-commands.bundle.zip)
+* [Download the Add-On for Windows](https://github.com/tlorantfy/archicad-additional-json-commands/releases/download/25.3/archicad-additional-json-commands.apx)
+* [Download the Add-On for macOS](https://github.com/tlorantfy/archicad-additional-json-commands/releases/download/25.3/archicad-additional-json-commands.bundle.zip)
 
 **Requires Archicad 25 or later.**
 
@@ -16,6 +16,7 @@ These JSON commands are **callable via Python**, see examples below.
 - [GetArchicadLocation](#getarchicadlocation)
 - [Quit](#quit)
 - [ReloadLibraries](#reloadlibraries)
+- [MoveElements](#moveelements)
 
 ## Publish
 Performs a publish operation on the currently opened project. Only the given publisher set will be published.
@@ -135,9 +136,8 @@ act = conn.types
 acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'TeamworkReceive'))
 ```
 
-## ReloadLibraries
-Resets and loads the active libraries.  
-All the active libraries (included the BIMcloud and BIM Server Libraries too) will be reloaded.
+## MoveElements
+Moves elements with a given movement vector.
 ### Parameters
 ### Response
 * errorMessage
@@ -152,5 +152,8 @@ conn = ACConnection.connect ()
 acc = conn.commands
 act = conn.types
 
-acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'ReloadLibraries'))
+objects = acc.GetElementsByType ('Object')
+elementsWithMoveVectors = [{'elementId': {'guid': str (object.elementId.guid)}, 'moveVector': {'x': 1.0, 'y': 1.0, 'z': 0.0}} for object in objects]
+
+acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'MoveElements'), {'elementsWithMoveVectors': elementsWithMoveVectors})
 ```
