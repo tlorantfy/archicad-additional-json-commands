@@ -157,3 +157,26 @@ elementsWithMoveVectors = [{'elementId': {'guid': str (object.elementId.guid)}, 
 
 acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'MoveElements'), {'elementsWithMoveVectors': elementsWithMoveVectors})
 ```
+
+## CreateColumns
+Creates columns. The given coordinates will be origos of the columns.
+### Parameters
+* coordinates
+  * Type: array of x,y values
+### Response
+* errorMessage
+  * Type: string
+  * The error message upon error. If the command executed successfully, then there is no response.
+### Python Example
+```python
+from archicad import ACConnection
+
+conn = ACConnection.connect ()
+
+acc = conn.commands
+act = conn.types
+
+origosOfNewColumns = [{'x': 1.0, 'y': 1.0}, {'x': 5.0, 'y': 5.0}]
+
+acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'CreateColumns'), {'coordinates': origosOfNewColumns})
+```
