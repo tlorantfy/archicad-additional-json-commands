@@ -17,6 +17,8 @@ These JSON commands are **callable via Python**, see examples below.
 - [Quit](#quit)
 - [ReloadLibraries](#reloadlibraries)
 - [MoveElements](#moveelements)
+- [CreateColumns](#createcolumns)
+- [GetHotlinks](#gethotlinks)
 
 ## Publish
 Performs a publish operation on the currently opened project. Only the given publisher set will be published.
@@ -136,6 +138,25 @@ act = conn.types
 acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'TeamworkReceive'))
 ```
 
+## ReloadLibraries
+Reloads the libraries of the current Archicad project.
+### Parameters
+### Response
+* errorMessage
+  * Type: string
+  * The error message upon error. If the command executed successfully, then there is no response.
+### Python Example
+```python
+from archicad import ACConnection
+
+conn = ACConnection.connect ()
+
+acc = conn.commands
+act = conn.types
+
+acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'ReloadLibraries'))
+```
+
 ## MoveElements
 Moves elements with a given movement vector.
 ### Parameters
@@ -179,4 +200,22 @@ act = conn.types
 origosOfNewColumns = [{'x': 1.0, 'y': 1.0}, {'x': 5.0, 'y': 5.0}]
 
 acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'CreateColumns'), {'coordinates': origosOfNewColumns})
+```
+
+## GetHotlinks
+Get the file system locations (path) of the hotlink modules. The hotlinks can have tree hierarchy in the project.
+### Response
+* hotlinks (required)
+  * Type: array
+  * List of hotlinks with locations and the children in the tree hierarchy.
+### Python Example
+```python
+from archicad import ACConnection
+
+conn = ACConnection.connect ()
+
+acc = conn.commands
+act = conn.types
+
+print (acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'GetHotlinks')))
 ```
