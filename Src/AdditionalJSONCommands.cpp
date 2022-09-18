@@ -93,6 +93,13 @@ void AdditionalJSONCommand::OnResponseValidationFailed (const GS::ObjectState& /
 {
 }
 
+#ifdef ServerMainVers_2600
+bool AdditionalJSONCommand::IsProcessWindowVisible () const
+{
+	return false;
+}
+#endif
+
 
 // --- PublishCommand ----------------------------------------------------------------------------------
 
@@ -571,7 +578,11 @@ GS::ObjectState	CreateColumnsCommand::Execute (const GS::ObjectState& parameters
 		API_ElementMemo memo = {};
 		const GS::OnExit guard ([&memo] () { ACAPI_DisposeElemMemoHdls (&memo); });
 
-		element.header.typeID = API_ColumnID;
+		#ifdef ServerMainVers_2600
+		element.header.type = API_ElemType(API_ColumnID); // AC26
+		#else
+		element.header.typeID = API_ColumnID; // AC25
+		#endif
 		APIErrCodes err = (APIErrCodes) ACAPI_Element_GetDefaults (&element, &memo);
 
 		for (const GS::ObjectState& coordinate : coordinates) {
