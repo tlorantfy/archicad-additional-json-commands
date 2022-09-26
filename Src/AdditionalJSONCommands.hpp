@@ -15,6 +15,9 @@ public:
 	virtual GS::Optional<GS::UniString>			GetResponseSchema () const override;
 	virtual API_AddOnCommandExecutionPolicy		GetExecutionPolicy () const override			{ return API_AddOnCommandExecutionPolicy::ScheduleForExecutionOnMainThread; }
 	virtual void								OnResponseValidationFailed (const GS::ObjectState& response) const override;
+	#ifdef ServerMainVers_2600
+		virtual bool IsProcessWindowVisible () const override;
+	#endif
 };
 
 
