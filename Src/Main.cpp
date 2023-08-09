@@ -5,7 +5,18 @@
 #include	"APIEnvir.h"
 #include	"ACAPinc.h"		// also includes APIdefs.h
 
-#include	"AdditionalJSONCommands.hpp"
+#include	"PublishCommand.hpp"
+#include	"PublishCommand.hpp"
+#include	"TeamworkReceiveCommand.hpp"
+#include	"GetProjectInfoCommand.hpp"
+#include	"GetArchicadLocationCommand.hpp"
+#include	"QuitCommand.hpp"
+#include	"ReloadLibrariesCommand.hpp"
+#include	"MoveElementsCommand.hpp"
+#include	"CreateColumnsCommand.hpp"
+#include	"GetHotlinksCommand.hpp"
+#include	"GetGDLParametersOfElementsCommand.hpp"
+#include	"ChangeGDLParametersOfElementsCommand.hpp"
 
 
 // =============================================================================
@@ -44,7 +55,9 @@ GSErrCode	__ACDLL_CALL	RegisterInterface (void)
 
 GSErrCode __ACENV_CALL	Initialize (void)
 {
-	GSErrCode err = ACAPI_Install_AddOnCommandHandler (GS::NewOwned<PublishCommand> ());
+	GSErrCode err = NoError;
+	
+	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<PublishCommand> ());
 	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<TeamworkReceiveCommand> ());
 	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<GetProjectInfoCommand> ());
 	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<GetArchicadLocationCommand> ());
@@ -53,6 +66,8 @@ GSErrCode __ACENV_CALL	Initialize (void)
 	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<MoveElementsCommand> ());
 	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<CreateColumnsCommand> ());
 	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<GetHotlinksCommand> ());
+	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<GetGDLParametersOfElementsCommand> ());
+	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<ChangeGDLParametersOfElementsCommand> ());
 
 	return err;
 }		// Initialize

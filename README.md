@@ -3,8 +3,7 @@
 This Add-On extends the JSON interface of Archicad by implementing new JSON commands.  
 These JSON commands are **callable via Python**, see examples below.
 
-* [Download the Add-On for Windows](https://github.com/tlorantfy/archicad-additional-json-commands/releases/download/25.4/archicad-additional-json-commands.apx)
-* [Download the Add-On for macOS](https://github.com/tlorantfy/archicad-additional-json-commands/releases/download/25.3/archicad-additional-json-commands.bundle.zip)
+* [Download the Add-On for Windows](https://github.com/tlorantfy/archicad-additional-json-commands/releases/download/26.1/archicad-additional-json-commands.apx)
 
 **Requires Archicad 25 or later.**
 
@@ -160,6 +159,15 @@ acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'ReloadLi
 ## MoveElements
 Moves elements with a given movement vector.
 ### Parameters
+* elementsWithMoveVectors (required)
+  * Type: array
+  * Items:
+    * Type: object
+    * Fields:
+      * elementId (required)
+        * Type: Element identifier object (guid field)
+      * moveVector (required)
+        * Type: 3D vector object (x, y, z fields).
 ### Response
 * errorMessage
   * Type: string
@@ -182,7 +190,7 @@ acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'MoveElem
 ## CreateColumns
 Creates columns. The given coordinates will be origos of the columns.
 ### Parameters
-* coordinates
+* coordinates (required)
   * Type: array of x,y values
 ### Response
 * errorMessage
@@ -218,4 +226,61 @@ acc = conn.commands
 act = conn.types
 
 print (acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'GetHotlinks')))
+```
+
+## GetGDLParametersOfElements
+Get all the GDL parameters (name, type, value) of the given elements.
+### Parameters
+* elements (required)
+  * Type: array
+  * Items:
+    * Type: object
+    * Fields:
+      * elementId (required)
+        * Type: Element identifier object (guid field)
+### Response
+* gdlParametersOfElements (required)
+  * Type: array of GDL parameters dictionary.
+### Python Example
+```python
+from archicad import ACConnection
+
+conn = ACConnection.connect ()
+
+acc = conn.commands
+act = conn.types
+
+elements = [ { 'elementId' : { 'guid' : str (e.elementId.guid) } } for e in acc.GetElementsByType ('Object') ]
+
+print (acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'GetGDLParametersOfElements', { 'elements' : elements })))
+```
+
+## ChangeGDLParametersOfElements
+Changes the given GDL parameters of the given elements.
+### Parameters
+* elementsWithGDLParameters (required)
+  * Type: array
+  * Items:
+    * Type: object
+    * Fields:
+      * elementId (required)
+        * Type: Element identifier object (guid field)
+      * gdlParameters (required)
+        * Type: The dictionary of GDL parameters with the new values.
+### Response
+* errorMessage
+  * Type: string
+  * The error message upon error. If the command executed successfully, then there is no response.
+### Python Example
+```python
+from archicad import ACConnection
+
+conn = ACConnection.connect ()
+
+acc = conn.commands
+act = conn.types
+
+elementsWithGDLParameters = [ { 'elementId' : { 'guid' : str (e.elementId.guid) }, 'gdlParameters' : { 'gs_cont_pen' : 95 } } for e in acc.GetElementsByType ('Object') ]
+
+print (acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'ChangeGDLParametersOfElements', { 'elementsWithGDLParameters' : elementsWithGDLParameters })))
 ```
