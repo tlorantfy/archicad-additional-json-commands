@@ -3,7 +3,10 @@
 This Add-On extends the JSON interface of Archicad by implementing new JSON commands.  
 These JSON commands are **callable via Python**, see examples below.
 
-* [Download the Add-On for Windows](https://github.com/tlorantfy/archicad-additional-json-commands/releases/download/26.1/archicad-additional-json-commands.apx)
+Download the Add-On or build it for your own platform and Archicad version.
+
+* [Download the Add-On for Archicad 26 for Windows platform](https://github.com/tlorantfy/archicad-additional-json-commands/releases/download/26.1/archicad-additional-json-commands.apx)
+* [Download the Add-On for Archicad 25 for Windows platform](https://github.com/tlorantfy/archicad-additional-json-commands/releases/download/25.4/archicad-additional-json-commands.apx)
 
 **Requires Archicad 25 or later.**
 
