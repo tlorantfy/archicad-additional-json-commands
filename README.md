@@ -43,8 +43,10 @@ conn = ACConnection.connect ()
 acc = conn.commands
 act = conn.types
 
-parameters = { 'publisherSetName': publisherSetName }
-acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'Publish'), parameters)
+publisherSetNames = acc.GetPublisherSetNames ()
+for publisherSetName in publisherSetNames:
+  parameters = { 'publisherSetName': publisherSetName }
+  acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'Publish'), parameters)
 ```
 
 ## GetProjectInfo
