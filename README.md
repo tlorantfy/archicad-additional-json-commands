@@ -18,6 +18,8 @@ These JSON commands are **callable via Python**, see examples below.
 - [MoveElements](#moveelements)
 - [CreateColumns](#createcolumns)
 - [GetHotlinks](#gethotlinks)
+- [GetGDLParametersOfElements](#getgdlparametersofelements)
+- [ChangeGDLParametersOfElements](#changegdlparametersofelements)
 
 ## Publish
 Performs a publish operation on the currently opened project. Only the given publisher set will be published.
