@@ -176,7 +176,11 @@ GS::ObjectState	ChangeGDLParametersOfElementsCommand::Execute (const GS::ObjectS
 			API_ParamOwnerType   paramOwner = {};
 
 			paramOwner.libInd = 0;
+#ifdef ServerMainVers_2600
 			paramOwner.type   = API_ObjectID;
+#else
+			paramOwner.typeID  = API_ObjectID;
+#endif
 			paramOwner.guid   = elemGuid;
 
 			err = ACAPI_Goodies (APIAny_OpenParametersID, &paramOwner);
@@ -262,8 +266,11 @@ GS::ObjectState	ChangeGDLParametersOfElementsCommand::Execute (const GS::ObjectS
 						API_ElementMemo memo = {};
 
 						ACAPI_ELEMENT_MASK_CLEAR (mask);
-
+#ifdef ServerMainVers_2600
 						switch (element.header.type.typeID) {
+#else
+						switch (element.header.typeID) {
+#endif
 							case API_ObjectID:
 								element.object.xRatio = getParams.a;
 								element.object.yRatio = getParams.b;

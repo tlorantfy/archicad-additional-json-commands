@@ -311,7 +311,11 @@ GS::ObjectState	GetGDLParametersOfElementsCommand::Execute (const GS::ObjectStat
 
 		API_ParamOwnerType paramOwner = {};
 		paramOwner.libInd = 0;
+#ifdef ServerMainVers_2600
 		paramOwner.type   = API_ObjectID;
+#else
+		paramOwner.typeID = API_ObjectID;
+#endif
 		paramOwner.guid   = elemGuid;
 
 		API_ElementMemo memo = {};

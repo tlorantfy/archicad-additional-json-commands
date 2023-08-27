@@ -4,7 +4,7 @@ function (SetCompilerOptions target)
 	target_compile_features (${target} PUBLIC cxx_std_14)
 	target_compile_options (${target} PUBLIC "$<$<CONFIG:Debug>:-DDEBUG>")
 	if (WIN32)
-		target_compile_options (${target} PUBLIC /W4 /WX /wd4996 /Zc:wchar_t-)
+		target_compile_options (${target} PUBLIC /W4 /WX /wd4996 /wd4499 /Zc:wchar_t-)
 	else ()
 		target_compile_options (${target} PUBLIC -Wall -Wextra -Werror -fvisibility=hidden
 			-Wno-multichar
