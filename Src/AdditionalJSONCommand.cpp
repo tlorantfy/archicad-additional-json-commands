@@ -72,3 +72,46 @@ API_Guid AdditionalJSONCommand::GetGuidFromElementIdField (const GS::ObjectState
 	os.Get (GuidField, guid);
 	return APIGuidFromString (guid.ToCStr ());
 }
+
+
+namespace Utilities {
+
+
+GS::Array<GS::Pair<short, double>> GetStoryLevels ()
+{
+	GS::Array<GS::Pair<short, double>> storyLevels;
+	API_StoryInfo storyInfo = {};
+
+	GSErrCode err = ACAPI_Environment (APIEnv_GetStorySettingsID, &storyInfo);
+	if (err == NoError) {
+		const short numberOfStories = storyInfo.lastStory - storyInfo.firstStory + 1;
+		for (short i = 0; i < numberOfStories; ++i) {
+			storyLevels.PushNew ((*storyInfo.data)[i].index, (*storyInfo.data)[i].level);
+		}
+		BMKillHandle ((GSHandle*) &storyInfo.data);
+	}
+	return storyLevels;
+}
+
+
+short GetFloorIndexAndOffset (double zPos, const GS::Array<GS::Pair<short, double>>& storyLevels, double& zOffset)
+{
+	if (storyLevels.IsEmpty ()) {
+		zOffset = zPos;
+		return 0;
+	}
+
+	auto* lastStoryIndexAndLevel = &storyLevels[0];
+	for (const auto& storyIndexAndLevel : storyLevels) {
+		if (storyIndexAndLevel.second > zPos) {
+			break;
+		}
+		lastStoryIndexAndLevel = &storyIndexAndLevel;
+	}
+
+	zOffset = zPos - lastStoryIndexAndLevel->second;
+	return lastStoryIndexAndLevel->first;
+}
+
+
+}

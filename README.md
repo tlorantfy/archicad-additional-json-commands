@@ -198,7 +198,7 @@ acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'MoveElem
 Creates columns. The given coordinates will be origos of the columns.
 ### Parameters
 * coordinates (required)
-  * Type: array of x,y values
+  * Type: array of 3D coordinates with x,y,z values
 ### Response
 * errorMessage
   * Type: string
@@ -212,7 +212,7 @@ conn = ACConnection.connect ()
 acc = conn.commands
 act = conn.types
 
-origosOfNewColumns = [{'x': 1.0, 'y': 1.0}, {'x': 5.0, 'y': 5.0}]
+origosOfNewColumns = [{'x': 1.0, 'y': 1.0, 'z': 0.0}, {'x': 5.0, 'y': 5.0, 'z': 3.0}]
 
 acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'CreateColumns'), {'coordinates': origosOfNewColumns})
 ```
