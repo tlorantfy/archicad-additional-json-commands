@@ -14,6 +14,7 @@
 #include	"ReloadLibrariesCommand.hpp"
 #include	"MoveElementsCommand.hpp"
 #include	"CreateColumnsCommand.hpp"
+#include	"CreateSlabsCommand.hpp"
 #include	"GetHotlinksCommand.hpp"
 #include	"GetGDLParametersOfElementsCommand.hpp"
 #include	"ChangeGDLParametersOfElementsCommand.hpp"
@@ -65,6 +66,7 @@ GSErrCode __ACENV_CALL	Initialize (void)
 	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<ReloadLibrariesCommand> ());
 	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<MoveElementsCommand> ());
 	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<CreateColumnsCommand> ());
+	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<CreateSlabsCommand> ());
 	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<GetHotlinksCommand> ());
 	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<GetGDLParametersOfElementsCommand> ());
 	err |= ACAPI_Install_AddOnCommandHandler (GS::NewOwned<ChangeGDLParametersOfElementsCommand> ());

@@ -20,6 +20,7 @@ Download the Add-On or build it for your own platform and Archicad version.
 - [ReloadLibraries](#reloadlibraries)
 - [MoveElements](#moveelements)
 - [CreateColumns](#createcolumns)
+- [CreateSlabs](#createcolumns)
 - [GetHotlinks](#gethotlinks)
 - [GetGDLParametersOfElements](#getgdlparametersofelements)
 - [ChangeGDLParametersOfElements](#changegdlparametersofelements)
@@ -212,9 +213,64 @@ conn = ACConnection.connect ()
 acc = conn.commands
 act = conn.types
 
-origosOfNewColumns = [{'x': 1.0, 'y': 1.0, 'z': 0.0}, {'x': 5.0, 'y': 5.0, 'z': 3.0}]
+storyHeight = 3.0
+origosOfNewColumns = [{'x': x*2, 'y': y*2, 'z': z*storyHeight} for x in range(10) for y in range(10) for z in range(2)]
 
 acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'CreateColumns'), {'coordinates': origosOfNewColumns})
+```
+
+## CreateSlabs
+Creates polygonal slabs. The given coordinates will define the polygon of the edges.
+### Parameters
+* slabs (required)
+  * Type: object
+  * Fields:
+    * level (required)
+      * Type: number
+      * The elevation of the slab, the Z coordinate of the reference line.
+    * polygonCoordinates (required)
+      * Type: array of 2D coordinates with x,y values.
+    * holes (optional)
+      * polygonCoordinates (optional)
+        * Type: array of 2D coordinates with x,y values.
+### Response
+* errorMessage
+  * Type: string
+  * The error message upon error. If the command executed successfully, then there is no response.
+### Python Example
+```python
+from archicad import ACConnection
+
+conn = ACConnection.connect ()
+
+acc = conn.commands
+act = conn.types
+
+origo = {'x': 0, 'y': 0, 'z': 0}
+slabWidth = 6.0
+slabHoleWidth = 2.0
+storyHeight = 3.0
+
+slabPolygonCoordinates = [
+    {'x': +3.0, 'y': -3.0},
+    {'x': +3.0, 'y': +3.0},
+    {'x': -3.0, 'y': +3.0},
+    {'x': -3.0, 'y': -3.0}
+]
+slabHolePolygonCoordinates = [
+    {'x': +1.0, 'y': -1.0},
+    {'x': +1.0, 'y': +1.0},
+    {'x': -1.0, 'y': +1.0},
+    {'x': -1.0, 'y': -1.0}
+]
+
+slabs = [{
+    'level': i * storyHeight,
+    'polygonCoordinates': slabPolygonCoordinates,
+    'holes': [{'polygonCoordinates': slabHolePolygonCoordinates}]
+} for i in range(3)]
+
+acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'CreateSlabs'), {'slabs': slabs})
 ```
 
 ## GetHotlinks
