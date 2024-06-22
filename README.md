@@ -5,7 +5,7 @@ These JSON commands are **callable via Python**, see examples below.
 
 Download the Add-On or build it for your own platform and Archicad version.
 
-* [Download the Add-On for Archicad 26 for Windows platform](https://github.com/tlorantfy/archicad-additional-json-commands/releases/download/26.3/archicad-additional-json-commands.26.apx)
+* [Download the Add-On for Archicad 26 for Windows platform](https://github.com/tlorantfy/archicad-additional-json-commands/releases/download/26.4/archicad-additional-json-commands.26.apx)
 * [Download the Add-On for Archicad 25 for Windows platform](https://github.com/tlorantfy/archicad-additional-json-commands/releases/download/26.3/archicad-additional-json-commands.25.apx)
 
 **Requires Archicad 25 or later.**
@@ -20,7 +20,8 @@ Download the Add-On or build it for your own platform and Archicad version.
 - [ReloadLibraries](#reloadlibraries)
 - [MoveElements](#moveelements)
 - [CreateColumns](#createcolumns)
-- [CreateSlabs](#createcolumns)
+- [CreateSlabs](#createslabs)
+- [CreateObjects](#createobjects)
 - [GetHotlinks](#gethotlinks)
 - [GetGDLParametersOfElements](#getgdlparametersofelements)
 - [ChangeGDLParametersOfElements](#changegdlparametersofelements)
@@ -271,6 +272,31 @@ slabs = [{
 } for i in range(3)]
 
 acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'CreateSlabs'), {'slabs': slabs})
+```
+
+## CreateObjects
+Creates library part based objects. The given coordinate will be the origo of the object.
+### Parameters
+* objects (required)
+  * Type: object
+  * Fields:
+    * name (required)
+      * Type: string
+      * The name of the library part.
+    * coordinate (required)
+      * Type: 3D coordinates with x,y,z values.
+    * dimensions (required)
+      * Type: Size coordinates with x,y,z values.
+### Response
+* errorMessage
+  * Type: string
+  * The error message upon error. If the command executed successfully, then there is no response.
+### Python Example
+```python
+treeParameters = [{'name': 'Tree Model Detailed 26',
+                    'coordinate': {'x': 0, 'y': 0, 'z': 0},
+                    'dimensions': {'x': 2, 'y': 2, 'z': 10}}]
+acc.ExecuteAddOnCommand (act.AddOnCommandId ('AdditionalJSONCommands', 'CreateObjects'), {'objects': treeParameters})
 ```
 
 ## GetHotlinks
