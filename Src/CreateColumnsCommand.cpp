@@ -56,16 +56,6 @@ CoordinatesParameterField);
 }
 
 
-static API_Coord3D GetCoordinateFromObjectState (const GS::ObjectState& objectState)
-{
-	API_Coord3D coordinate = {};
-	objectState.Get ("x", coordinate.x);
-	objectState.Get ("y", coordinate.y);
-	objectState.Get ("z", coordinate.z);
-	return coordinate;
-}
-
-
 GS::ObjectState	CreateColumnsCommand::Execute (const GS::ObjectState& parameters, GS::ProcessControl& /*processControl*/) const
 {
 	GS::Array<GS::ObjectState> coordinates;
@@ -87,7 +77,7 @@ GS::ObjectState	CreateColumnsCommand::Execute (const GS::ObjectState& parameters
 		const GS::Array<GS::Pair<short, double>> storyLevels = Utilities::GetStoryLevels ();
 
 		for (const GS::ObjectState& coordinate : coordinates) {
-			apiCoordinate = GetCoordinateFromObjectState (coordinate);
+			apiCoordinate = Utilities::Get3DCoordinateFromObjectState (coordinate);
 
 			element.header.floorInd = Utilities::GetFloorIndexAndOffset (apiCoordinate.z, storyLevels, element.column.bottomOffset);
 			element.column.origoPos.x = apiCoordinate.x;

@@ -28,6 +28,9 @@ constexpr const char* ElementIdField = "elementId";
 namespace Utilities {
 	GS::Array<GS::Pair<short, double>> GetStoryLevels ();
 	short GetFloorIndexAndOffset (double zPos, const GS::Array<GS::Pair<short, double>>& storyLevels, double& zOffset);
+
+	API_Coord 	Get2DCoordinateFromObjectState (const GS::ObjectState& objectState);
+	API_Coord3D Get3DCoordinateFromObjectState (const GS::ObjectState& objectState);
 }
 
 #endif

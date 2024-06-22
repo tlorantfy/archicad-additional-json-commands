@@ -114,4 +114,23 @@ short GetFloorIndexAndOffset (double zPos, const GS::Array<GS::Pair<short, doubl
 }
 
 
+API_Coord Get2DCoordinateFromObjectState (const GS::ObjectState& objectState)
+{
+	API_Coord coordinate = {};
+	objectState.Get ("x", coordinate.x);
+	objectState.Get ("y", coordinate.y);
+	return coordinate;
+}
+
+
+API_Coord3D Get3DCoordinateFromObjectState (const GS::ObjectState& objectState)
+{
+	API_Coord3D coordinate = {};
+	objectState.Get ("x", coordinate.x);
+	objectState.Get ("y", coordinate.y);
+	objectState.Get ("z", coordinate.z);
+	return coordinate;
+}
+
+
 }

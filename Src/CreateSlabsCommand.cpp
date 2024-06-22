@@ -77,24 +77,15 @@ SlabsParameterField);
 }
 
 
-static API_Coord GetCoordinateFromObjectState (const GS::ObjectState& objectState)
-{
-	API_Coord coordinate = {};
-	objectState.Get ("x", coordinate.x);
-	objectState.Get ("y", coordinate.y);
-	return coordinate;
-}
-
-
 static void AddPolyToMemo (const GS::Array<GS::ObjectState>& polygonCoordinates,
-						   const API_OverriddenAttribute&	sideMat,
-						   Int32& iCoord,
-						   Int32& iPends,
-						   API_ElementMemo& memo)
+						   const API_OverriddenAttribute&	 sideMat,
+						   Int32& 							 iCoord,
+						   Int32& 							 iPends,
+						   API_ElementMemo& 				 memo)
 {
 	Int32 iStart = iCoord;
 	for (const GS::ObjectState& polygonCoordinate : polygonCoordinates) {
-		(*memo.coords)[iCoord] = GetCoordinateFromObjectState (polygonCoordinate);
+		(*memo.coords)[iCoord] = Utilities::Get2DCoordinateFromObjectState (polygonCoordinate);
 		(*memo.edgeTrims)[iCoord].sideType = APIEdgeTrim_Vertical; // Only vertical trim is supported yet by my code
 		memo.sideMaterials[iCoord] = sideMat;
 		++iCoord;
