@@ -133,4 +133,142 @@ API_Coord3D Get3DCoordinateFromObjectState (const GS::ObjectState& objectState)
 }
 
 
+constexpr const char* ParameterValueFieldName = "value";
+
+
+void SetValueInteger (API_ChangeParamType& changeParam,
+					  const GS::ObjectState&	parameterDetails)
+{
+	Int32 value;
+	parameterDetails.Get (ParameterValueFieldName, value);
+	changeParam.realValue = value;
+}
+
+
+void SetValueDouble (API_ChangeParamType& changeParam,
+					 const GS::ObjectState&	parameterDetails)
+{
+	double value;
+	parameterDetails.Get (ParameterValueFieldName, value);
+	changeParam.realValue = value;
+}
+
+
+void SetValueOnOff (API_ChangeParamType& changeParam,
+					const GS::ObjectState&	parameterDetails)
+{
+	GS::String value;
+	parameterDetails.Get (ParameterValueFieldName, value);
+	changeParam.realValue = (value == "Off" ? 0 : 1);
+}
+ 
+
+void SetValueBool (API_ChangeParamType& changeParam,
+				   const GS::ObjectState&	parameterDetails)
+{
+	bool value;
+	parameterDetails.Get (ParameterValueFieldName, value);
+	changeParam.realValue = (value ? 0 : 1);
+}
+
+
+void SetValueString (API_ChangeParamType& changeParam,
+					 const GS::ObjectState&	parameterDetails)
+{
+	GS::UniString value;
+	parameterDetails.Get (ParameterValueFieldName, value);
+
+	constexpr USize MaxStrValueLength = 512;
+
+	static GS::uchar_t strValuePtr[MaxStrValueLength];
+	GS::ucscpy (strValuePtr, value.ToUStr (0, GS::Min(value.GetLength (), MaxStrValueLength)).Get ());
+
+	changeParam.uStrValue = strValuePtr;
+}
+
+
+void SetValueInteger (API_AddParType& addPar,
+					  const GS::ObjectState&	parameterDetails)
+{
+	Int32 value;
+	parameterDetails.Get (ParameterValueFieldName, value);
+	addPar.value.real = value;
+}
+
+
+void SetValueDouble (API_AddParType& addPar,
+					 const GS::ObjectState&	parameterDetails)
+{
+	double value;
+	parameterDetails.Get (ParameterValueFieldName, value);
+	addPar.value.real = value;
+}
+
+
+void SetValueOnOff (API_AddParType& addPar,
+					const GS::ObjectState&	parameterDetails)
+{
+	GS::String value;
+	parameterDetails.Get (ParameterValueFieldName, value);
+	addPar.value.real = (value == "Off" ? 0 : 1);
+}
+ 
+
+void SetValueBool (API_AddParType& addPar,
+				   const GS::ObjectState&	parameterDetails)
+{
+	bool value;
+	parameterDetails.Get (ParameterValueFieldName, value);
+	addPar.value.real = (value ? 0 : 1);
+}
+
+
+void SetValueString (API_AddParType& addPar,
+					 const GS::ObjectState&	parameterDetails)
+{
+	GS::UniString value;
+	parameterDetails.Get (ParameterValueFieldName, value);
+
+	GS::ucscpy (addPar.value.uStr, value.ToUStr (0, GS::Min(value.GetLength (), (USize)API_UAddParStrLen)).Get ());
+}
+
+
+void ChangeParams (API_AddParType**& params, const GS::HashTable<GS::String, GS::ObjectState>& changeParamsDictionary)
+{
+	const GSSize nParams = BMGetHandleSize ((GSHandle) params) / sizeof (API_AddParType);
+	GS::HashTable<GS::String, API_AddParID> gdlParametersTypeDictionary;
+	for (GSIndex ii = 0; ii < nParams; ++ii) {
+		API_AddParType& actParam = (*params)[ii];
+
+		const GS::String name(actParam.name);
+		const auto* value = changeParamsDictionary.GetPtr (name);
+		if (value == nullptr)
+			continue;
+
+		switch (actParam.typeID) {
+			case APIParT_Integer:
+			case APIParT_PenCol:				SetValueInteger (actParam, *value);	break;
+			case APIParT_ColRGB:
+			case APIParT_Intens:
+			case APIParT_Length:
+			case APIParT_RealNum:
+			case APIParT_Angle:					SetValueDouble (actParam, *value);	break;
+			case APIParT_LightSw:				SetValueOnOff (actParam, *value); 	break;
+			case APIParT_Boolean: 				SetValueBool (actParam, *value);	break;
+			case APIParT_LineTyp:
+			case APIParT_Mater:
+			case APIParT_FillPat:
+			case APIParT_BuildingMaterial:
+			case APIParT_Profile: 				SetValueInteger (actParam, *value);	break;
+			case APIParT_CString:
+			case APIParT_Title: 				SetValueString (actParam, *value);	break;
+			default:
+			case APIParT_Dictionary:
+				// Not supported by the Archicad API yet
+				break;
+		}
+	}
+}
+
+
 }

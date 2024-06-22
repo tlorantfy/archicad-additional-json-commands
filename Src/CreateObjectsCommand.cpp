@@ -12,6 +12,7 @@ GS::String CreateObjectsCommand::GetName () const
 constexpr const char* ObjectsParameterField = "objects";
 constexpr const char* ObjectNameParameterField = "name";
 constexpr const char* ObjectCoordinateParameterField = "coordinate";
+constexpr const char* ObjectDimensionsParameterField = "dimensions";
 
 
 GS::Optional<GS::UniString> CreateObjectsCommand::GetInputParametersSchema () const
@@ -53,10 +54,35 @@ GS::Optional<GS::UniString> CreateObjectsCommand::GetInputParametersSchema () co
 							"y",
 							"z"
 						]
+					},
+					"%s": {
+						"type": "object",
+						"description" : "3D size.",
+						"properties" : {
+							"x": {
+								"type": "number",
+								"description" : "X dimension."
+							},
+							"y" : {
+								"type": "number",
+								"description" : "Y dimension."
+							},
+							"z" : {
+								"type": "number",
+								"description" : "Z dimension."
+							}
+						},
+						"additionalProperties": false,
+						"required" : [
+							"x",
+							"y",
+							"z"
+						]
 					}
 				},
 				"additionalProperties": true,
 				"required" : [
+					"%s",
 					"%s",
 					"%s"
 				]
@@ -71,8 +97,10 @@ GS::Optional<GS::UniString> CreateObjectsCommand::GetInputParametersSchema () co
 ObjectsParameterField,
 ObjectNameParameterField,
 ObjectCoordinateParameterField,
+ObjectDimensionsParameterField,
 ObjectNameParameterField,
 ObjectCoordinateParameterField,
+ObjectDimensionsParameterField,
 ObjectsParameterField);
 }
 
@@ -122,9 +150,18 @@ GS::ObjectState	CreateObjectsCommand::Execute (const GS::ObjectState& parameters
 			object.Get (ObjectCoordinateParameterField, coordinate);
 			apiCoordinate = Utilities::Get3DCoordinateFromObjectState (coordinate);
 
+			object.Get (ObjectDimensionsParameterField, coordinate);
+			API_Coord3D dimensions = Utilities::Get3DCoordinateFromObjectState (coordinate);
+
 			element.object.pos.x = apiCoordinate.x;
 			element.object.pos.y = apiCoordinate.y;
 			element.header.floorInd = Utilities::GetFloorIndexAndOffset (apiCoordinate.z, storyLevels, element.object.level);
+
+			element.object.xRatio = dimensions.x;
+			element.object.yRatio = dimensions.y;
+			GS::ObjectState os;
+			os.Add("value", dimensions.z);
+			Utilities::ChangeParams(memo.params, {{"ZZYZX", os}});
 
 			err = (APIErrCodes) ACAPI_Element_Create (&element, &memo);
 

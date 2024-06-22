@@ -31,6 +31,29 @@ namespace Utilities {
 
 	API_Coord 	Get2DCoordinateFromObjectState (const GS::ObjectState& objectState);
 	API_Coord3D Get3DCoordinateFromObjectState (const GS::ObjectState& objectState);
+
+	void SetValueInteger (API_ChangeParamType& changeParam,
+					  	  const GS::ObjectState& parameterDetails);
+	void SetValueDouble (API_ChangeParamType& changeParam,
+					 	 const GS::ObjectState&	parameterDetails);
+	void SetValueOnOff (API_ChangeParamType& changeParam,
+						const GS::ObjectState&	parameterDetails);
+	void SetValueBool (API_ChangeParamType& changeParam,
+				   	   const GS::ObjectState&	parameterDetails);
+	void SetValueString (API_ChangeParamType& changeParam,
+					 	 const GS::ObjectState&	parameterDetails);
+	void SetValueInteger (API_AddParType& addPar,
+					  	  const GS::ObjectState& parameterDetails);
+	void SetValueDouble (API_AddParType& addPar,
+					 	 const GS::ObjectState&	parameterDetails);
+	void SetValueOnOff (API_AddParType& addPar,
+						const GS::ObjectState&	parameterDetails);
+	void SetValueBool (API_AddParType& addPar,
+				   	   const GS::ObjectState&	parameterDetails);
+	void SetValueString (API_AddParType& addPar,
+					 	 const GS::ObjectState&	parameterDetails);
+
+	void ChangeParams (API_AddParType**& params, const GS::HashTable<GS::String, GS::ObjectState>& changeParamsDictionary);
 }
 
 #endif

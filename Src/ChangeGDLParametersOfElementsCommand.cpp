@@ -97,57 +97,6 @@ ElementsWithGDLParametersDictionaryParameterField
 }
 
 
-static void SetValueInteger (API_ChangeParamType& changeParam,
-							 const GS::ObjectState&	parameterDetails)
-{
-	Int32 value;
-	parameterDetails.Get (ParameterValueFieldName, value);
-	changeParam.realValue = value;
-}
-
-
-static void SetValueDouble (API_ChangeParamType& changeParam,
-							const GS::ObjectState&	parameterDetails)
-{
-	double value;
-	parameterDetails.Get (ParameterValueFieldName, value);
-	changeParam.realValue = value;
-}
-
-
-static void SetValueOnOff (API_ChangeParamType& changeParam,
-							   const GS::ObjectState&	parameterDetails)
-{
-	GS::String value;
-	parameterDetails.Get (ParameterValueFieldName, value);
-	changeParam.realValue = (value == "Off" ? 0 : 1);
-}
- 
-
-static void SetValueBool (API_ChangeParamType& changeParam,
-							   const GS::ObjectState&	parameterDetails)
-{
-	bool value;
-	parameterDetails.Get (ParameterValueFieldName, value);
-	changeParam.realValue = (value ? 0 : 1);
-}
-
-
-static void SetValueString (API_ChangeParamType& changeParam,
-							const GS::ObjectState&	parameterDetails)
-{
-	GS::UniString value;
-	parameterDetails.Get (ParameterValueFieldName, value);
-
-	constexpr USize MaxStrValueLength = 512;
-
-	static GS::uchar_t strValuePtr[MaxStrValueLength];
-	GS::ucscpy (strValuePtr, value.ToUStr (0, GS::Min(value.GetLength (), MaxStrValueLength)).Get ());
-
-	changeParam.uStrValue = strValuePtr;
-}
-
-
 GS::ObjectState	ChangeGDLParametersOfElementsCommand::Execute (const GS::ObjectState& parameters, GS::ProcessControl& /*processControl*/) const
 {
 	GS::Array<GS::ObjectState> elementsWithGDLParameters;
@@ -225,21 +174,21 @@ GS::ObjectState	ChangeGDLParametersOfElementsCommand::Execute (const GS::ObjectS
 
 						switch (gdlParametersTypeDictionary[parameterName]) {
 							case APIParT_Integer:
-							case APIParT_PenCol:				SetValueInteger (changeParam, parameterDetails);	break;
+							case APIParT_PenCol:				Utilities::SetValueInteger (changeParam, parameterDetails);	break;
 							case APIParT_ColRGB:
 							case APIParT_Intens:
 							case APIParT_Length:
 							case APIParT_RealNum:
-							case APIParT_Angle:					SetValueDouble (changeParam, parameterDetails);		break;
-							case APIParT_LightSw:				SetValueOnOff (changeParam, parameterDetails); 		break;
-							case APIParT_Boolean: 				SetValueBool (changeParam, parameterDetails);		break;
+							case APIParT_Angle:					Utilities::SetValueDouble (changeParam, parameterDetails);	break;
+							case APIParT_LightSw:				Utilities::SetValueOnOff (changeParam, parameterDetails); 	break;
+							case APIParT_Boolean: 				Utilities::SetValueBool (changeParam, parameterDetails);	break;
 							case APIParT_LineTyp:
 							case APIParT_Mater:
 							case APIParT_FillPat:
 							case APIParT_BuildingMaterial:
-							case APIParT_Profile: 				SetValueInteger (changeParam, parameterDetails);	break;
+							case APIParT_Profile: 				Utilities::SetValueInteger (changeParam, parameterDetails);	break;
 							case APIParT_CString:
-							case APIParT_Title: 				SetValueString (changeParam, parameterDetails);		break;
+							case APIParT_Title: 				Utilities::SetValueString (changeParam, parameterDetails);	break;
 							default:
 							case APIParT_Dictionary:
 								// Not supported by the Archicad API yet
